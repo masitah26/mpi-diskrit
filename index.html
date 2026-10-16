@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solusi Masalah Diskrit | SMK Negeri 1 Jabon</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: '#6366f1',
+                            secondary: '#ec4899',
+                            accent: '#f59e0b',
+                            mint: '#10b981',
+                            dark: '#0f172a',
+                            school: '#1e40af'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                        fun: ['Baloo 2', 'cursive', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(51, 65, 85, 0.6);
+        }
+        .canva-shadow {
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.2), 0 8px 10px -6px rgba(236, 72, 153, 0.2);
+        }
+        .fallback-3d {
+            transform: perspective(800px) rotateX(5deg) rotateY(-5deg);
+            transition: transform 0.3s ease;
+        }
+        .fallback-3d:hover {
+            transform: perspective(800px) rotateX(0deg) rotateY(0deg) scale(1.02);
+        }
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-pink-50 to-amber-50 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
+
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-indigo-100 dark:border-slate-800 px-4 py-3 shadow-sm">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div id="logoContainer" class="w-10 h-10 rounded-full bg-brand-school text-white flex items-center justify-center font-bold text-sm shadow-md overflow-hidden border-2 border-white dark:border-slate-800">
+                    <span id="logoText">SMKN 1</span>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold tracking-wide text-brand-school dark:text-indigo-400 font-heading">SMK NEGERI 1 JABON</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Informatika X • TP 1.3 Berpikir Komputasional</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <div class="relative">
+                    <select id="departmentSelect" onchange="changeDepartment(this.value)" class="text-xs font-semibold bg-indigo-50 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-full border border-indigo-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                        <option value="DPB">Jurusan: DPB (Busana)</option>
+                        <option value="TEI">Jurusan: TEI (Elektronika)</option>
+                        <option value="DKV">Jurusan: DKV (Desain)</option>
+                    </select>
+                </div>
+
+                <div class="hidden sm:flex items-center space-x-2 bg-amber-50 dark:bg-amber-950/50 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-800 text-xs font-bold text-amber-700 dark:text-amber-400">
+                    <i class="fa-solid fa-star text-brand-accent"></i>
+                    <span id="xpDisplay">0</span> XP
+                </div>
+                <div class="hidden sm:flex items-center space-x-1 bg-pink-50 dark:bg-pink-950/50 px-3 py-1 rounded-full border border-pink-200 dark:border-pink-800 text-xs font-bold text-pink-700 dark:text-pink-400">
+                    <i class="fa-solid fa-fire text-brand-secondary"></i>
+                    <span id="streakDisplay">1</span> Hari
+                </div>
+
+                <button onclick="toggleTheme()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-indigo-100 transition shadow-inner" title="Ganti Tema">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 pb-24 sm:pb-12">
+        <!-- VIEW: BERANDA -->
+        <div id="view-home" class="view-section space-y-8">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-8 sm:p-12 text-white shadow-xl canva-shadow">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute -left-10 -top-10 w-48 h-48 bg-amber-300/20 rounded-full blur-xl pointer-events-none"></div>
+                
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div class="space-y-4">
+                        <span class="inline-block bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border border-white/30">
+                            ✨ Media Pembelajaran Interaktif SMK
+                        </span>
+                        <h2 class="text-3xl sm:text-5xl font-extrabold font-fun tracking-tight leading-tight drop-shadow-md">
+                            Solusi Masalah Diskrit
+                        </h2>
+                        <p class="text-sm sm:text-base text-indigo-100 max-w-xl font-medium">
+                            Kuasai logika, proposisi, pencacahan, optimasi, dan graf dengan cara yang paling seru, interaktif, dan relevan dengan keahlian jurusanmu di <span class="underline decoration-amber-300 decoration-2">SMK Negeri 1 Jabon</span>!
+                        </p>
+                        <div class="pt-2 flex flex-wrap gap-3">
+                            <button onclick="navigateTo('modul1')" class="bg-brand-accent hover:bg-amber-600 text-slate-900 font-bold px-6 py-3 rounded-2xl shadow-lg transition transform hover:-translate-y-1 flex items-center space-x-2">
+                                <i class="fa-solid fa-play"></i>
+                                <span>Mulai Belajar Sekarang</span>
+                            </button>
+                            <button onclick="openAboutModal()" class="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold px-5 py-3 rounded-2xl transition border border-white/30 flex items-center space-x-2">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span>Tentang Media</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="h-64 sm:h-80 w-full relative flex items-center justify-center">
+                        <div id="canvas3d-container" class="w-full h-full rounded-2xl overflow-hidden shadow-inner bg-black/10 backdrop-blur-sm border border-white/20">
+                            <div class="w-full h-full flex items-center justify-center text-center p-6 fallback-3d">
+                                <div class="space-y-2">
+                                    <div class="inline-block p-4 bg-white/20 rounded-3xl text-4xl animate-bounce">💡</div>
+                                    <p class="text-xs font-bold tracking-wider">BERPIKIR KOMPUTASIONAL TP 1.3</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-bold font-heading text-slate-800 dark:text-slate-100">Peta Belajar Interaktif</h3>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Pilih modul di bawah untuk memulai petualangan logikamu!</p>
+                    </div>
+                    <div class="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-slate-800 px-3 py-1 rounded-lg">
+                        Progres: <span id="progressPercent">0</span>% Selesai
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    <!-- Modul 1 -->
+                    <div onclick="navigateTo('modul1')" class="glass-card rounded-3xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-1.5 cursor-pointer relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-500/10 rounded-bl-full group-hover:scale-125 transition"></div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-300 flex items-center justify-center font-bold text-xl shadow-inner">
+                                <i class="fa-solid fa-puzzle-piece"></i>
+                            </span>
+                            <span id="badge-modul1" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Belum Selesai</span>
+                        </div>
+                        <h4 class="text-base font-bold font-heading mb-1 group-hover:text-indigo-600 transition">Modul 1: Logika & Proposisi</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Menentukan nilai kebenaran, operasi dasar AND, OR, NOT, dan tabel kebenaran.</p>
+                        <div class="flex items-center text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                            <span>Mulai Belajar</span> <i class="fa-solid fa-arrow-right ml-1 group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+
+                    <!-- Modul 2 -->
+                    <div onclick="navigateTo('modul2')" class="glass-card rounded-3xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-1.5 cursor-pointer relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-pink-500/10 rounded-bl-full group-hover:scale-125 transition"></div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-12 h-12 rounded-2xl bg-pink-100 dark:bg-pink-900/50 text-pink-600 dark:text-pink-300 flex items-center justify-center font-bold text-xl shadow-inner">
+                                <i class="fa-solid fa-sliders"></i>
+                            </span>
+                            <span id="badge-modul2" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Belum Selesai</span>
+                        </div>
+                        <h4 class="text-base font-bold font-heading mb-1 group-hover:text-pink-600 transition">Modul 2: Pengambilan Keputusan</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Aturan JIKA...MAKA, pengujian gerbang logika, dan simulasi pintu otomatis.</p>
+                        <div class="flex items-center text-xs font-bold text-pink-600 dark:text-pink-400">
+                            <span>Mulai Belajar</span> <i class="fa-solid fa-arrow-right ml-1 group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+
+                    <!-- Modul 3 -->
+                    <div onclick="navigateTo('modul3')" class="glass-card rounded-3xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-1.5 cursor-pointer relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-bl-full group-hover:scale-125 transition"></div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-300 flex items-center justify-center font-bold text-xl shadow-inner">
+                                <i class="fa-solid fa-calculator"></i>
+                            </span>
+                            <span id="badge-modul3" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Belum Selesai</span>
+                        </div>
+                        <h4 class="text-base font-bold font-heading mb-1 group-hover:text-amber-600 transition">Modul 3: Pencacahan & Kombinatorika</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Aturan penjumlahan, perkalian, faktorial, permutasi, dan keamanan sandi.</p>
+                        <div class="flex items-center text-xs font-bold text-amber-600 dark:text-amber-400">
+                            <span>Mulai Belajar</span> <i class="fa-solid fa-arrow-right ml-1 group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+
+                    <!-- Modul 4 -->
+                    <div onclick="navigateTo('modul4')" class="glass-card rounded-3xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-1.5 cursor-pointer relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-bl-full group-hover:scale-125 transition"></div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-300 flex items-center justify-center font-bold text-xl shadow-inner">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </span>
+                            <span id="badge-modul4" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Belum Selesai</span>
+                        </div>
+                        <h4 class="text-base font-bold font-heading mb-1 group-hover:text-emerald-600 transition">Modul 4: Masalah Optimasi</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Strategi Greedy, Brute Force, masalah ransel (knapsack), dan penjadwalan.</p>
+                        <div class="flex items-center text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                            <span>Mulai Belajar</span> <i class="fa-solid fa-arrow-right ml-1 group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+
+                    <!-- Modul 5 -->
+                    <div onclick="navigateTo('modul5')" class="glass-card rounded-3xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-1.5 cursor-pointer relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-bl-full group-hover:scale-125 transition"></div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-12 h-12 rounded-2xl bg-cyan-100 dark:bg-cyan-900/50 text-cyan-600 dark:text-cyan-300 flex items-center justify-center font-bold text-xl shadow-inner">
+                                <i class="fa-solid fa-network-wired"></i>
+                            </span>
+                            <span id="badge-modul5" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Belum Selesai</span>
+                        </div>
+                        <h4 class="text-base font-bold font-heading mb-1 group-hover:text-cyan-600 transition">Modul 5: Graf & Jalur Terpendek</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Simpul, sisi, bobot, graf sekolah, dan pencarian rute terpendek.</p>
+                        <div class="flex items-center text-xs font-bold text-cyan-600 dark:text-cyan-400">
+                            <span>Mulai Belajar</span> <i class="fa-solid fa-arrow-right ml-1 group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+
+                    <!-- Modul 6 -->
+                    <div onclick="navigateTo('modul6')" class="glass-card rounded-3xl p-6 shadow-md hover:shadow-xl transition transform hover:-translate-y-1.5 cursor-pointer relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-violet-500/10 rounded-bl-full group-hover:scale-125 transition"></div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="w-12 h-12 rounded-2xl bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-300 flex items-center justify-center font-bold text-xl shadow-inner">
+                                <i class="fa-solid fa-users-gear"></i>
+                            </span>
+                            <span id="badge-modul6" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Belum Selesai</span>
+                        </div>
+                        <h4 class="text-base font-bold font-heading mb-1 group-hover:text-violet-600 transition">Modul 6: Proyek Kolaboratif</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Pemecahan masalah kontekstual lintas disiplin keahlian dengan laporan mandiri.</p>
+                        <div class="flex items-center text-xs font-bold text-violet-600 dark:text-violet-400">
+                            <span>Mulai Belajar</span> <i class="fa-solid fa-arrow-right ml-1 group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evaluasi Card -->
+                <div onclick="navigateTo('evaluasi')" class="glass-card rounded-3xl p-6 sm:p-8 shadow-md hover:shadow-xl transition transform hover:-translate-y-1 cursor-pointer flex flex-col sm:flex-row items-center justify-between border-2 border-brand-accent">
+                    <div class="flex items-center space-x-4 mb-4 sm:mb-0">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-accent/20 text-brand-accent flex items-center justify-center text-3xl font-bold shadow-lg">
+                            🏆
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold font-heading text-slate-800 dark:text-slate-100">Evaluasi Akhir & Refleksi</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Uji pemahaman komprehensif seluruh modul dan cetak laporan hasil belajarmu.</p>
+                        </div>
+                    </div>
+                    <button class="bg-brand-accent hover:bg-amber-600 text-slate-900 font-bold px-6 py-3 rounded-2xl transition shadow">
+                        Mulai Evaluasi
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: MODUL 1 (LOGIKA & PROPOSISI) -->
+        <div id="view-modul1" class="view-section hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 border-t-4 border-indigo-500">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full text-xs font-bold">Modul 1 dari 6</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold font-heading mt-2 text-indigo-600 dark:text-indigo-400">Logika dan Proposisi</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">Dasar berpikir komputasional: pernyataan benar/salah dan penggabungan syarat.</p>
+                    </div>
+                    <button onclick="openTeacherModal('modul1')" class="self-start sm:self-auto bg-indigo-50 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-indigo-100 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-chalkboard-user"></i><span>Petunjuk Guru</span>
+                    </button>
+                </div>
+
+                <div class="bg-indigo-50/80 dark:bg-indigo-950/40 p-5 rounded-2xl space-y-2 border border-indigo-200 dark:border-indigo-800">
+                    <h4 class="text-sm font-bold font-heading text-indigo-700 dark:text-indigo-300 flex items-center space-x-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i><span>Cerita Kontekstual (<span class="dept-label">Jurusan</span>)</span>
+                    </h4>
+                    <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed dept-intro-m1">
+                        Di SMK Negeri 1 Jabon, dalam menyiapkan rancangan kerja, setiap aturan harus dipastikan kebenarannya secara mutlak tanpa keraguan. Kalimat yang bernilai pasti benar atau pasti salah disebut <b>Proposisi</b>.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl shadow-sm border border-indigo-100 dark:border-slate-700 space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900 text-indigo-600 flex items-center justify-center font-bold">1</div>
+                        <h5 class="font-bold text-sm">Apa itu Proposisi?</h5>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Kalimat deklaratif yang bernilai benar (B) atau salah (S), tapi tidak kedua-duanya. Perintah, pertanyaan, dan opini bukan proposisi.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl shadow-sm border border-indigo-100 dark:border-slate-700 space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-pink-100 dark:bg-pink-900 text-pink-600 flex items-center justify-center font-bold">2</div>
+                        <h5 class="font-bold text-sm">Operator AND & OR</h5>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed"><b>AND</b> wajib semua syarat lengkap. <b>OR</b> cukup salah satu terpenuhi. <b>NOT</b> membalik nilai kebenaran.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl shadow-sm border border-indigo-100 dark:border-slate-700 space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900 text-amber-600 flex items-center justify-center font-bold">3</div>
+                        <h5 class="font-bold text-sm">Tabel Kebenaran</h5>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Alat bantu menguji seluruh kombinasi nilai kebenaran p, q, dan r secara sistematis.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-indigo-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-brand-primary text-white flex items-center justify-center text-xs">A</span>
+                        <span>Aktivitas A: Sortir Kalimat Proposisi</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Klik tombol di bawah kartu kalimat untuk mengelompokkannya ke kotak "Proposisi" atau "Bukan Proposisi".</p>
+                    <div id="m1-sort-cards" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+                    <div id="m1-sort-feedback" class="text-xs font-bold text-center text-indigo-600"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-indigo-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-brand-primary text-white flex items-center justify-center text-xs">B</span>
+                        <span>Aktivitas B: Simulator Tabel Kebenaran 3 Variabel (p, q, r)</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Ubah nilai saklar p, q, dan r untuk melihat hasil operasi gabungan secara langsung.</p>
+                    <div class="flex flex-wrap gap-4 items-center justify-center bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold">p:</span>
+                            <button onclick="toggleLogicVar('p')" id="var-p" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow">Benar (B)</button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold">q:</span>
+                            <button onclick="toggleLogicVar('q')" id="var-q" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow">Benar (B)</button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold">r:</span>
+                            <button onclick="toggleLogicVar('r')" id="var-r" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 text-white shadow">Salah (S)</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                        <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-xl">
+                            <div class="text-[10px] text-slate-500">p AND q</div>
+                            <div id="res-and" class="text-sm font-bold text-indigo-600 mt-1">Benar</div>
+                        </div>
+                        <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-xl">
+                            <div class="text-[10px] text-slate-500">p OR q</div>
+                            <div id="res-or" class="text-sm font-bold text-indigo-600 mt-1">Benar</div>
+                        </div>
+                        <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-xl">
+                            <div class="text-[10px] text-slate-500">NOT p</div>
+                            <div id="res-not" class="text-sm font-bold text-indigo-600 mt-1">Salah</div>
+                        </div>
+                        <div class="p-3 bg-brand-accent/20 rounded-xl border border-brand-accent">
+                            <div class="text-[10px] font-bold text-amber-700 dark:text-amber-400">(p OR q) AND NOT r</div>
+                            <div id="res-complex" class="text-sm font-bold text-amber-600 mt-1">Benar</div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <h5 class="text-xs font-bold text-slate-600 dark:text-slate-300">Latihan Lengkapi Tabel 8 Baris untuk (p OR q) AND NOT r:</h5>
+                            <button onclick="checkTruthTable()" class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-indigo-700 transition">Cek Jawaban Tabel</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-center border-collapse">
+                               <thead>
+                                   <tr class="bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
+                                       <th class="p-2 border">p</th>
+                                       <th class="p-2 border">q</th>
+                                       <th class="p-2 border">r</th>
+                                       <th class="p-2 border">(p OR q) AND NOT r (Isi: B / S)</th>
+                                   </tr>
+                               </thead>
+                               <tbody id="truth-table-body"></tbody>
+                            </table>
+                        </div>
+                        <div id="table-feedback" class="text-xs font-bold text-center"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-indigo-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-brand-primary text-white flex items-center justify-center text-xs">C</span>
+                        <span>Aktivitas C: Simulasi Syarat Lomba Kompetensi</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Aturan seleksi: <b>Nilai ≥ 80</b> DAN <b>Kehadiran ≥ 90%</b>. Pilih operator untuk 5 siswa:</p>
+                    <div class="flex gap-2">
+                        <button onclick="setContestOperator('AND')" id="btn-op-and" class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-primary text-white shadow">Gunakan AND (Wajib Kedua Syarat)</button>
+                        <button onclick="setContestOperator('OR')" id="btn-op-or" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200">Gunakan OR (Cukup Salah Satu)</button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-3" id="contest-students"></div>
+                    <div id="contest-explanation" class="p-4 bg-indigo-50 dark:bg-slate-800 rounded-2xl text-xs text-slate-700 dark:text-slate-300"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-indigo-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading text-indigo-600 flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-question"></i><span>Kuis Cepat Modul 1</span>
+                    </h4>
+                    <div id="m1-quiz-container" class="space-y-4"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-indigo-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <i class="fa-solid fa-feather text-pink-500"></i><span>Refleksi Pembelajaran</span>
+                    </h4>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Kesalahan apa yang paling sering terjadi saat menggabungkan dua syarat logika?</label>
+                        <textarea id="refleksi-m1" rows="2" class="w-full text-xs p-3 rounded-xl border border-indigo-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Tuliskan refleksimu singkat di sini..."></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="completeModule(1)" class="bg-brand-mint hover:bg-emerald-600 text-slate-900 font-bold px-6 py-3 rounded-2xl shadow-lg transition flex items-center space-x-2">
+                            <i class="fa-solid fa-check"></i><span>Selesaikan Modul 1 (+50 XP)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: MODUL 2 (PENGAMBILAN KEPUTUSAN) -->
+        <div id="view-modul2" class="view-section hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 border-t-4 border-pink-500">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="bg-pink-100 dark:bg-pink-950 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-full text-xs font-bold">Modul 2 dari 6</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold font-heading mt-2 text-pink-600 dark:text-pink-400">Logika dalam Pengambilan Keputusan</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">Penerapan aturan JIKA...MAKA, implikasi, dan pengujian nilai batas.</p>
+                    </div>
+                    <button onclick="openTeacherModal('modul2')" class="self-start sm:self-auto bg-pink-50 dark:bg-slate-800 text-pink-700 dark:text-pink-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-pink-100 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-chalkboard-user"></i><span>Petunjuk Guru</span>
+                    </button>
+                </div>
+
+                <div class="bg-pink-50/80 dark:bg-pink-950/40 p-5 rounded-2xl space-y-2 border border-pink-200 dark:border-pink-800">
+                    <h4 class="text-sm font-bold font-heading text-pink-700 dark:text-pink-300 flex items-center space-x-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i><span>Cerita Kontekstual (<span class="dept-label">Jurusan</span>)</span>
+                    </h4>
+                    <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed dept-intro-m2">
+                        Sistem otomasi di industri dan aplikasi memerlukan aturan keputusan berlapis menggunakan struktur JIKA...MAKA...SELAIN ITU serta pengujian nilai batas yang teliti agar tidak terjadi kesalahan fatal.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl shadow-sm border border-pink-100 dark:border-slate-700 space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-pink-100 dark:bg-pink-900 text-pink-600 flex items-center justify-center font-bold">1</div>
+                        <h5 class="font-bold text-sm">Implikasi (JIKA... MAKA...)</h5>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Pernyataan bersyarat p → q hanya bernilai SALAH jika syarat p terpenuhi tetapi akibat q tidak terjadi (janji yang diingkari).</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl shadow-sm border border-pink-100 dark:border-slate-700 space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900 text-indigo-600 flex items-center justify-center font-bold">2</div>
+                        <h5 class="font-bold text-sm">Urutan Operator & Kurung</h5>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Evaluasi dilakukan dengan urutan: BUKAN (NOT), lalu DAN (AND), kemudian ATAU (OR). Selalu gunakan tanda kurung agar tidak keliru.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl shadow-sm border border-pink-100 dark:border-slate-700 space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900 text-amber-600 flex items-center justify-center font-bold">3</div>
+                        <h5 class="font-bold text-sm">Pengujian Nilai Batas</h5>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Kesalahan sering terjadi pada batas angka (misal syarat ≥ 75, bagaimana dengan nilai 74?). Selalu uji nilai tepat di batas.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-pink-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-pink-500 text-white flex items-center justify-center text-xs">A</span>
+                        <span>Aktivitas A: Simulator Pintu Otomatis (Aturan: ada_orang DAN BUKAN terkunci)</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Atur saklar sensor di bawah untuk menguji apakah pintu akan terbuka atau tetap tertutup.</p>
+                    <div class="flex flex-wrap gap-4 items-center justify-center bg-slate-50 dark:bg-slate-800/60 p-5 rounded-2xl">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xs font-bold">Sensor Ada Orang:</span>
+                            <button onclick="toggleDoorSensor('person')" id="btn-sensor-person" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow">Terdeteksi (B)</button>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xs font-bold">Status Terkunci:</span>
+                            <button onclick="toggleDoorSensor('lock')" id="btn-sensor-lock" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 text-white shadow">Tidak Terkunci (S)</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center p-6 bg-slate-900 rounded-2xl text-white space-y-4">
+                        <div id="door-visual" class="w-48 h-32 border-4 border-pink-500 rounded-xl flex items-center justify-center font-fun text-xl tracking-wider transition-all duration-500 bg-pink-950/50 shadow-inner">
+                            PINTU TERBUKA
+                        </div>
+                        <div id="door-status-text" class="text-xs text-pink-300 font-bold">Tindakan Sistem: Pintu Membuka Otomatis</div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-pink-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-pink-500 text-white flex items-center justify-center text-xs">B</span>
+                        <span>Aktivitas B: Penguji Aturan Beasiswa "(penghasilan rendah DAN nilai ≥ 75) ATAU juara olimpiade"</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Uji 5 kasus nyata siswa di bawah ini. Tentukan apakah siswa tersebut Layak atau Tidak Layak.</p>
+                    <div class="space-y-3" id="scholarship-cases"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-pink-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-pink-500 text-white flex items-center justify-center text-xs">C</span>
+                        <span>Aktivitas C: Mencari Celah Aturan Kebersihan</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Analisis tabel 8 kombinasi di bawah untuk aturan "(piket lengkap DAN BUKAN ada pelanggaran) ATAU rekomendasi wali kelas".</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-center border-collapse">
+                            <thead>
+                                <tr class="bg-pink-100 dark:bg-pink-950 text-pink-700 dark:text-pink-300">
+                                    <th class="p-2 border">Piket Lengkap (p)</th>
+                                    <th class="p-2 border">Ada Pelanggaran (q)</th>
+                                    <th class="p-2 border">Rekomendasi Wali (r)</th>
+                                    <th class="p-2 border">Hasil Aturan</th>
+                                    <th class="p-2 border">Catatan Analisis</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hygiene-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-pink-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading text-pink-600 flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-question"></i><span>Kuis Cepat Modul 2</span>
+                    </h4>
+                    <div id="m2-quiz-container" class="space-y-4"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-pink-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <i class="fa-solid fa-feather text-pink-500"></i><span>Refleksi Pembelajaran</span>
+                    </h4>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Mengapa aturan keputusan yang baik harus diuji pada semua kombinasi dan nilai batas?</label>
+                        <textarea id="refleksi-m2" rows="2" class="w-full text-xs p-3 rounded-xl border border-pink-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-pink-500 outline-none" placeholder="Tuliskan refleksimu singkat di sini..."></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="completeModule(2)" class="bg-brand-mint hover:bg-emerald-600 text-slate-900 font-bold px-6 py-3 rounded-2xl shadow-lg transition flex items-center space-x-2">
+                            <i class="fa-solid fa-check"></i><span>Selesaikan Modul 2 (+50 XP)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: MODUL 3 (PENCACAHAN & KOMBINATORIKA) -->
+        <div id="view-modul3" class="view-section hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 border-t-4 border-amber-500">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 px-3 py-1 rounded-full text-xs font-bold">Modul 3 dari 6</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold font-heading mt-2 text-amber-600 dark:text-amber-400">Pencacahan dan Kombinatorika Dasar</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">Aturan perkalian, penjumlahan, faktorial, permutasi, dan keamanan sandi.</p>
+                    </div>
+                    <button onclick="openTeacherModal('modul3')" class="self-start sm:self-auto bg-amber-50 dark:bg-slate-800 text-amber-700 dark:text-amber-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-amber-100 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-chalkboard-user"></i><span>Petunjuk Guru</span>
+                    </button>
+                </div>
+
+                <div class="bg-amber-50/80 dark:bg-amber-950/40 p-5 rounded-2xl space-y-2 border border-amber-200 dark:border-amber-800">
+                    <h4 class="text-sm font-bold font-heading text-amber-700 dark:text-amber-300 flex items-center space-x-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i><span>Cerita Kontekstual (<span class="dept-label">Jurusan</span>)</span>
+                    </h4>
+                    <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed dept-intro-m3">
+                        Bagaimana cara menghitung seluruh kemungkinan kombinasi warna, desain rancangan, atau menguji seberapa aman sandi akses dari peretasan? Kombinatorika memberikan rumus pasti untuk menghitungnya.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-slate-800/80 p-4 rounded-2xl shadow-sm border border-amber-100 dark:border-slate-700 space-y-2">
+                        <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-xs">1</div>
+                        <h5 class="font-bold text-xs">Aturan Perkalian (DAN)</h5>
+                        <p class="text-xs text-slate-500 leading-relaxed">Jika tugas berurutan ada $a$ dan $b$, total cara adalah $a \times b$.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800/80 p-4 rounded-2xl shadow-sm border border-amber-100 dark:border-slate-700 space-y-2">
+                        <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-xs">2</div>
+                        <h5 class="font-bold text-xs">Aturan Penjumlahan (ATAU)</h5>
+                        <p class="text-xs text-slate-500 leading-relaxed">Pilihan saling lepas $a$ atau $b$, total cara $a + b$.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800/80 p-4 rounded-2xl shadow-sm border border-amber-100 dark:border-slate-700 space-y-2">
+                        <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-xs">3</div>
+                        <h5 class="font-bold text-xs">Faktorial (n!)</h5>
+                        <p class="text-xs text-slate-500 leading-relaxed">Susunan objek berurutan: $n! = n \times (n-1) \times \dots \times 1$.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800/80 p-4 rounded-2xl shadow-sm border border-amber-100 dark:border-slate-700 space-y-2">
+                        <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-xs">4</div>
+                        <h5 class="font-bold text-xs">Permutasi</h5>
+                        <p class="text-xs text-slate-500 leading-relaxed">Penyusunan sebagian objek dari sejumlah calon dengan memperhatikan urutan.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-amber-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-brand-accent text-slate-900 flex items-center justify-center text-xs font-bold">A</span>
+                        <span>Aktivitas A: Pembuat Kombinasi Atribut (<span class="dept-label">Konteks</span>)</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Pilih komponen untuk melihat total kombinasi dan diagram pohon:</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-amber-50/70 dark:bg-slate-800 p-4 rounded-2xl space-y-2">
+                            <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Pilihan Atasan (3):</label>
+                            <select id="combo-tops" onchange="calcCombo()" class="w-full text-xs p-2.5 rounded-xl border border-amber-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                                <option value="3">Kemeja, Kaos, Batik (3)</option>
+                            </select>
+                        </div>
+                        <div class="bg-amber-50/70 dark:bg-slate-800 p-4 rounded-2xl space-y-2">
+                            <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Pilihan Bawahan (2):</label>
+                            <select id="combo-bottoms" onchange="calcCombo()" class="w-full text-xs p-2.5 rounded-xl border border-amber-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                                <option value="2">Celana Panjang, Rok (2)</option>
+                            </select>
+                        </div>
+                        <div class="bg-amber-50/70 dark:bg-slate-800 p-4 rounded-2xl space-y-2">
+                            <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Pilihan Sepatu (2):</label>
+                            <select id="combo-shoes" onchange="calcCombo()" class="w-full text-xs p-2.5 rounded-xl border border-amber-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                                <option value="2">Hitam, Putih (2)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center justify-between bg-amber-500/10 p-4 rounded-2xl border border-amber-500/30">
+                        <div class="text-xs font-bold text-amber-800 dark:text-amber-300">
+                            Total Kombinasi: <span id="combo-result" class="text-base text-amber-600">12</span> cara (3 × 2 × 2)
+                        </div>
+                        <button onclick="randomizeCombo()" class="mt-2 sm:mt-0 bg-brand-accent text-slate-900 font-bold px-4 py-2 rounded-xl text-xs shadow hover:bg-amber-600 transition">
+                            Acak Satu Gaya
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-amber-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-brand-accent text-slate-900 flex items-center justify-center text-xs font-bold">B</span>
+                        <span>Aktivitas B: Kalkulator Keamanan Kata Sandi & Roda Sandi</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Atur panjang sandi dan jenis karakter untuk menghitung jumlah kemungkinan dan estimasi waktu peretasan.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/60 p-5 rounded-2xl">
+                        <div class="space-y-3">
+                            <label class="block text-xs font-bold">Panjang Sandi (Karakter): <span id="pass-len-val">4</span></label>
+                            <input type="range" min="3" max="10" value="4" id="pass-length" oninput="calcPassword()" class="w-full accent-amber-500">
+                            <div class="space-y-2 pt-2">
+                                <label class="flex items-center space-x-2 text-xs font-semibold cursor-pointer">
+                                    <input type="checkbox" id="char-num" checked onchange="calcPassword()" class="rounded text-amber-500">
+                                    <span>Angka 0-9 (10 pilihan)</span>
+                                </label>
+                                <label class="flex items-center space-x-2 text-xs font-semibold cursor-pointer">
+                                    <input type="checkbox" id="char-lower" onchange="calcPassword()" class="rounded text-amber-500">
+                                    <span>Huruf Kecil a-z (26 pilihan)</span>
+                                </label>
+                                <label class="flex items-center space-x-2 text-xs font-semibold cursor-pointer">
+                                    <input type="checkbox" id="char-upper" onchange="calcPassword()" class="rounded text-amber-500">
+                                    <span>Huruf Besar A-Z (26 pilihan)</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/30 flex flex-col justify-center space-y-2">
+                            <div class="text-xs font-bold text-amber-800 dark:text-amber-300">Hasil Perhitungan:</div>
+                            <div class="text-sm font-bold">Total Kemungkinan: <span id="pass-possibilities" class="text-amber-600">10.000</span></div>
+                            <div class="text-xs text-slate-600 dark:text-slate-300">Waktu Tebak (1 tebakan/detik): <span id="pass-time-slow" class="font-bold">2 jam 47 menit</span></div>
+                            <div class="text-xs text-slate-600 dark:text-slate-300">Waktu Tebak (1 Miliar tebakan/detik): <span id="pass-time-fast" class="font-bold">0.00001 detik</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-amber-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-brand-accent text-slate-900 flex items-center justify-center text-xs font-bold">C</span>
+                        <span>Aktivitas C: Latihan 6 Soal Kombinatorika</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Pilih aturan (Perkalian, Penjumlahan, atau Permutasi), lalu isi jawabannya.</p>
+                    <div class="space-y-4" id="m3-exercises"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-amber-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading text-amber-600 flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-question"></i><span>Kuis Cepat Modul 3</span>
+                    </h4>
+                    <div id="m3-quiz-container" class="space-y-4"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-amber-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <i class="fa-solid fa-feather text-amber-500"></i><span>Refleksi Pembelajaran</span>
+                    </h4>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Mengapa kata sandi 8 karakter campuran jauh lebih aman daripada PIN 4 angka?</label>
+                        <textarea id="refleksi-m3" rows="2" class="w-full text-xs p-3 rounded-xl border border-amber-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-amber-500 outline-none" placeholder="Tuliskan refleksimu singkat di sini..."></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="completeModule(3)" class="bg-brand-mint hover:bg-emerald-600 text-slate-900 font-bold px-6 py-3 rounded-2xl shadow-lg transition flex items-center space-x-2">
+                            <i class="fa-solid fa-check"></i><span>Selesaikan Modul 3 (+50 XP)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: MODUL 4 (MASALAH OPTIMASI) -->
+        <div id="view-modul4" class="view-section hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 border-t-4 border-emerald-500">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-bold">Modul 4 dari 6</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold font-heading mt-2 text-emerald-600 dark:text-emerald-400">Masalah Optimasi</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">Strategi Greedy, Brute Force, masalah ransel (knapsack), dan penjadwalan.</p>
+                    </div>
+                    <button onclick="openTeacherModal('modul4')" class="self-start sm:self-auto bg-emerald-50 dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-emerald-100 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-chalkboard-user"></i><span>Petunjuk Guru</span>
+                    </button>
+                </div>
+
+                <div class="bg-emerald-50/80 dark:bg-emerald-950/40 p-5 rounded-2xl space-y-2 border border-emerald-200 dark:border-emerald-800">
+                    <h4 class="text-sm font-bold font-heading text-emerald-700 dark:text-emerald-300 flex items-center space-x-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i><span>Cerita Kontekstual (<span class="dept-label">Jurusan</span>)</span>
+                    </h4>
+                    <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed dept-intro-m4">
+                        Bagaimana memilih kombinasi bahan, anggaran, atau jadwal kerja agar mendapatkan hasil maksimal dengan sumber daya terbatas? Optimasi memberikan jawabannya.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl shadow-sm border border-emerald-100 dark:border-slate-700 space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">1</div>
+                        <h5 class="font-bold text-sm">Strategi Greedy</h5>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Pilih langkah yang paling menguntungkan saat ini tanpa melihat masa depan. Sangat cepat, namun kadang terkecoh (tidak selalu optimal mutlak).</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl shadow-sm border border-emerald-100 dark:border-slate-700 space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">2</div>
+                        <h5 class="font-bold text-sm">Coba Semua Kemungkinan (Brute Force)</h5>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Mengecek setiap kemungkinan kombinasi ($2^n$). Dijamin menemukan hasil terbaik mutlak, tetapi sangat lambat jika data terlalu banyak.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-emerald-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs">A</span>
+                        <span>Aktivitas A: Simulasi Kembalian Uang (Greedy vs Terbaik)</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Uji memberikan kembalian uang. Pilih pecahan uang yang tersedia (1.000, 3.000, 4.000) untuk total Rp6.000.</p>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-5 rounded-2xl space-y-3">
+                        <div class="text-xs font-bold">Target Kembalian: Rp6.000 | Pecahan: Rp4.000, Rp3.000, Rp1.000</div>
+                        <div class="flex gap-2">
+                            <button onclick="testGreedyChange(6000)" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs">Jalankan Simulasi Kasus Rp6.000</button>
+                        </div>
+                        <div id="change-result-box" class="text-xs text-slate-700 dark:text-slate-300 p-3 bg-white dark:bg-slate-900 rounded-xl border border-emerald-200">
+                            Klik tombol di atas untuk melihat mengapa Strategi Greedy memilih 3 lembar (4.000 + 1.000 + 1.000) sedangkan pilihan terbaik adalah 2 lembar (3.000 + 3.000).
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-emerald-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs">B</span>
+                        <span>Aktivitas B: Masalah Ransel (Knapsack Problem) Kapasitas 10 kg</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Pilih barang untuk dimasukkan ke ransel maksimal 10 kg agar total nilai maksimal:</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl border text-center space-y-1">
+                            <div class="font-bold text-xs">Barang A</div>
+                            <div class="text-[10px] text-slate-500">6 kg | Nilai: 30</div>
+                            <button onclick="toggleKnapsackItem('A')" id="k-btn-A" class="w-full py-1 bg-slate-100 dark:bg-slate-700 text-xs rounded font-bold">Pilih</button>
+                        </div>
+                        <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl border text-center space-y-1">
+                            <div class="font-bold text-xs">Barang B</div>
+                            <div class="text-[10px] text-slate-500">5 kg | Nilai: 28</div>
+                            <button onclick="toggleKnapsackItem('B')" id="k-btn-B" class="w-full py-1 bg-slate-100 dark:bg-slate-700 text-xs rounded font-bold">Pilih</button>
+                        </div>
+                        <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl border text-center space-y-1">
+                            <div class="font-bold text-xs">Barang C</div>
+                            <div class="text-[10px] text-slate-500">5 kg | Nilai: 27</div>
+                            <button onclick="toggleKnapsackItem('C')" id="k-btn-C" class="w-full py-1 bg-slate-100 dark:bg-slate-700 text-xs rounded font-bold">Pilih</button>
+                        </div>
+                        <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl border text-center space-y-1">
+                            <div class="font-bold text-xs">Barang D</div>
+                            <div class="text-[10px] text-slate-500">4 kg | Nilai: 22</div>
+                            <button onclick="toggleKnapsackItem('D')" id="k-btn-D" class="w-full py-1 bg-slate-100 dark:bg-slate-700 text-xs rounded font-bold">Pilih</button>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div class="text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                            Total Berat: <span id="k-weight">0</span> / 10 kg | Total Nilai: <span id="k-value">0</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="solveKnapsackBest()" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs">Tampilkan Solusi Terbaik (B+C = 55)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-emerald-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs">C</span>
+                        <span>Aktivitas C: Penjadwalan Kegiatan Tanpa Bentrok</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Pilih sebanyak mungkin kegiatan ekstrakurikuler yang jamnya tidak bertabrakan (Strategi: Urutkan jam selesai paling awal):</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-2" id="sched-container"></div>
+                    <div id="sched-feedback" class="text-xs font-bold text-emerald-600"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-emerald-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading text-emerald-600 flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-question"></i><span>Kuis Cepat Modul 4</span>
+                    </h4>
+                    <div id="m4-quiz-container" class="space-y-4"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-emerald-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <i class="fa-solid fa-feather text-emerald-500"></i><span>Refleksi Pembelajaran</span>
+                    </h4>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Kapan strategi greedy cukup digunakan, dan kapan kamu harus mencoba semua kemungkinan?</label>
+                        <textarea id="refleksi-m4" rows="2" class="w-full text-xs p-3 rounded-xl border border-emerald-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Tuliskan refleksimu singkat di sini..."></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="completeModule(4)" class="bg-brand-mint hover:bg-emerald-600 text-slate-900 font-bold px-6 py-3 rounded-2xl shadow-lg transition flex items-center space-x-2">
+                            <i class="fa-solid fa-check"></i><span>Selesaikan Modul 4 (+50 XP)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: MODUL 5 (GRAF & JALUR TERPENDEK) -->
+        <div id="view-modul5" class="view-section hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 border-t-4 border-cyan-500">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="bg-cyan-100 dark:bg-cyan-950 text-cyan-600 dark:text-cyan-400 px-3 py-1 rounded-full text-xs font-bold">Modul 5 dari 6</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold font-heading mt-2 text-cyan-600 dark:text-cyan-400">Graf dan Jalur Terpendek</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">Simpul, sisi, bobot, graf sekolah, dan pencarian rute terpendek.</p>
+                    </div>
+                    <button onclick="openTeacherModal('modul5')" class="self-start sm:self-auto bg-cyan-50 dark:bg-slate-800 text-cyan-700 dark:text-cyan-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-cyan-100 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-chalkboard-user"></i><span>Petunjuk Guru</span>
+                    </button>
+                </div>
+
+                <div class="bg-cyan-50/80 dark:bg-cyan-950/40 p-5 rounded-2xl space-y-2 border border-cyan-200 dark:border-cyan-800">
+                    <h4 class="text-sm font-bold font-heading text-cyan-700 dark:text-cyan-300 flex items-center space-x-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i><span>Cerita Kontekstual (<span class="dept-label">Jurusan</span>)</span>
+                    </h4>
+                    <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed dept-intro-m5">
+                        Memodelkan denah sekolah atau jaringan kabel menjadi titik (simpul) dan garis berbobot (sisi) untuk menemukan jalur paling efisien.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl shadow-sm border border-cyan-100 dark:border-slate-700 space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center font-bold">1</div>
+                        <h5 class="font-bold text-sm">Simpul, Sisi, & Bobot</h5>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Simpul (vertex) adalah tempat/titik. Sisi (edge) adalah jalur penghubung. Bobot (weight) adalah jarak atau waktu tempuh.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl shadow-sm border border-cyan-100 dark:border-slate-700 space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center font-bold">2</div>
+                        <h5 class="font-bold text-sm">Derajat Simpul</h5>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Jumlah sisi yang menempel pada suatu simpul. Total seluruh derajat simpul dalam graf selalu dua kali jumlah sisi.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-cyan-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-cyan-500 text-white flex items-center justify-center text-xs">A</span>
+                        <span>Aktivitas A: Eksplorasi Graf Sekolah SMK Negeri 1 Jabon</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Klik simpul di bawah ini untuk melihat derajat simpul dan menghitung jarak rute dari Gerbang:</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="graph-nodes-container"></div>
+                    <div id="graph-info-box" class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-xs space-y-1">
+                        <b>Informasi Simpul:</b> Pilih salah satu simpul di atas untuk melihat detail derajat dan sambungannya.
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-cyan-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-cyan-500 text-white flex items-center justify-center text-xs">B</span>
+                        <span>Aktivitas B: Simulasi Jalur Terpendek dari Gerbang ke Aula & Bengkel</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">Uji rute terpendek otomatis berdasarkan bobot sisi meter:</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="calcShortestPath('Aula')" class="bg-cyan-600 text-white font-bold px-4 py-2 rounded-xl text-xs">Cari Jalur Gerbang → Aula (330m)</button>
+                        <button onclick="calcShortestPath('Bengkel')" class="bg-cyan-600 text-white font-bold px-4 py-2 rounded-xl text-xs">Cari Jalur Gerbang → Bengkel (360m)</button>
+                    </div>
+                    <div id="path-result-display" class="p-4 bg-cyan-50 dark:bg-slate-800 rounded-2xl text-xs text-slate-700 dark:text-slate-300">
+                        Hasil perhitungan rute akan muncul di sini.
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-cyan-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading text-cyan-600 flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-question"></i><span>Kuis Cepat Modul 5</span>
+                    </h4>
+                    <div id="m5-quiz-container" class="space-y-4"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-cyan-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <i class="fa-solid fa-feather text-cyan-500"></i><span>Refleksi Pembelajaran</span>
+                    </h4>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Masalah apa di sekitarmu yang bisa digambar sebagai graf?</label>
+                        <textarea id="refleksi-m5" rows="2" class="w-full text-xs p-3 rounded-xl border border-cyan-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-cyan-500 outline-none" placeholder="Tuliskan refleksimu singkat di sini..."></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="completeModule(5)" class="bg-brand-mint hover:bg-emerald-600 text-slate-900 font-bold px-6 py-3 rounded-2xl shadow-lg transition flex items-center space-x-2">
+                            <i class="fa-solid fa-check"></i><span>Selesaikan Modul 5 (+50 XP)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: MODUL 6 (PROYEK KOLABORATIF) -->
+        <div id="view-modul6" class="view-section hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 border-t-4 border-violet-500">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="bg-violet-100 dark:bg-violet-950 text-violet-600 dark:text-violet-400 px-3 py-1 rounded-full text-xs font-bold">Modul 6 dari 6</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold font-heading mt-2 text-violet-600 dark:text-violet-400">Proyek Kolaboratif Pemecahan Masalah Diskrit</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">Pemecahan masalah kontekstual lintas disiplin keahlian dengan laporan mandiri.</p>
+                    </div>
+                    <button onclick="openTeacherModal('modul6')" class="self-start sm:self-auto bg-violet-50 dark:bg-slate-800 text-violet-700 dark:text-violet-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-violet-100 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-chalkboard-user"></i><span>Petunjuk Guru</span>
+                    </button>
+                </div>
+
+                <div class="bg-violet-50/80 dark:bg-violet-950/40 p-5 rounded-2xl space-y-2 border border-violet-200 dark:border-violet-800">
+                    <h4 class="text-sm font-bold font-heading text-violet-700 dark:text-violet-300 flex items-center space-x-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i><span>Panduan 6 Langkah Proyek</span>
+                    </h4>
+                    <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                        1. Rumuskan masalah & batasan<br>
+                        2. Dekomposisi & cari pola<br>
+                        3. Abstraksi data jadi tabel/graf<br>
+                        4. Rancang algoritma (logika/optimasi/graf)<br>
+                        5. Uji dengan data & bandingkan alternatif<br>
+                        6. Simpulkan & susun laporan
+                    </p>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-violet-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <span class="w-8 h-8 rounded-lg bg-violet-500 text-white flex items-center justify-center text-xs">📋</span>
+                        <span>Templat Laporan Proyek Mandiri / Kelompok</span>
+                    </h4>
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border space-y-4 shadow-sm">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold mb-1">Nama Anggota / Kelompok:</label>
+                                <input type="text" id="rep-name" class="w-full text-xs p-2 rounded-xl border bg-slate-50 dark:bg-slate-900" placeholder="Contoh: Kelompok 1 - X DPB">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold mb-1">Tema Proyek Pilihan:</label>
+                                <select id="rep-theme" class="w-full text-xs p-2 rounded-xl border bg-slate-50 dark:bg-slate-900">
+                                    <option>Tema 1: Rute Efisien Pengambilan Sampah Sekolah</option>
+                                    <option>Tema 2: Penjadwalan Lab Komputer Tanpa Bentrok</option>
+                                    <option>Tema 3: Aturan Seleksi Lomba Kompetensi Siswa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-1">1. Rumusan Masalah & Batasan:</label>
+                            <textarea id="rep-p1" rows="2" class="w-full text-xs p-2 rounded-xl border bg-slate-50 dark:bg-slate-900" placeholder="Tuliskan rumusan masalah diskrit yang diselesaikan..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-1">2. Pemodelan & Hasil Solusi:</label>
+                            <textarea id="rep-p2" rows="2" class="w-full text-xs p-2 rounded-xl border bg-slate-50 dark:bg-slate-900" placeholder="Tuliskan hasil perhitungan atau algoritma optimal..."></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                            <button onclick="copyProjectReport()" class="bg-violet-600 text-white font-bold px-5 py-2 rounded-xl text-xs hover:bg-violet-700 transition flex items-center space-x-2">
+                                <i class="fa-solid fa-copy"></i><span>Salin Laporan ke Clipboard</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-violet-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading text-violet-600 flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-question"></i><span>Kuis Cepat Modul 6</span>
+                    </h4>
+                    <div id="m6-quiz-container" class="space-y-4"></div>
+                </div>
+
+                <div class="space-y-4 pt-4 border-t border-violet-100 dark:border-slate-800">
+                    <h4 class="text-base font-bold font-heading flex items-center space-x-2">
+                        <i class="fa-solid fa-feather text-violet-500"></i><span>Refleksi Pembelajaran</span>
+                    </h4>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Alat berpikir apa yang paling membantu timmu dan mengapa?</label>
+                        <textarea id="refleksi-m6" rows="2" class="w-full text-xs p-3 rounded-xl border border-violet-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-violet-500 outline-none" placeholder="Tuliskan refleksimu singkat di sini..."></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="completeModule(6)" class="bg-brand-mint hover:bg-emerald-600 text-slate-900 font-bold px-6 py-3 rounded-2xl shadow-lg transition flex items-center space-x-2">
+                            <i class="fa-solid fa-check"></i><span>Selesaikan Modul 6 (+50 XP)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: EVALUASI AKHIR -->
+        <div id="view-evaluasi" class="view-section hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6 border-t-4 border-brand-accent">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full text-xs font-bold">Uji Kompetensi Komprehensif</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold font-heading mt-2 text-brand-accent">Evaluasi Akhir & Lembar Refleksi Diri</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">Uji seluruh pemahaman logika, pengambilan keputusan, pencacahan, optimasi, dan graf.</p>
+                    </div>
+                    <button onclick="openTeacherModal('evaluasi')" class="self-start sm:self-auto bg-amber-50 dark:bg-slate-800 text-amber-700 dark:text-amber-300 font-bold px-4 py-2 rounded-xl text-xs hover:bg-amber-100 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-chalkboard-user"></i><span>Kunci Kunci Evaluasi</span>
+                    </button>
+                </div>
+
+                <div class="space-y-6" id="eval-form-container">
+                    <!-- Diisi JS -->
+                </div>
+
+                <div class="flex justify-center pt-4">
+                    <button onclick="submitEvaluation()" class="bg-brand-accent hover:bg-amber-600 text-slate-900 font-extrabold px-8 py-4 rounded-2xl shadow-xl text-sm transition transform hover:scale-105 flex items-center space-x-2">
+                        <i class="fa-solid fa-award"></i><span>Periksa Hasil & Cetak Laporan</span>
+                    </button>
+                </div>
+
+                <div id="eval-result-card" class="hidden glass-card p-6 rounded-3xl border-2 border-brand-accent space-y-4">
+                    <!-- Diisi JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t border-indigo-100 dark:border-slate-800 py-2 px-4 z-40 shadow-lg">
+        <div class="max-w-2xl mx-auto flex justify-around items-center">
+            <button onclick="navigateTo('home')" id="nav-home" class="flex flex-col items-center text-brand-primary dark:text-indigo-400 font-bold text-xs transition">
+                <i class="fa-solid fa-house text-lg mb-0.5"></i>
+                <span>Beranda</span>
+            </button>
+            <button onclick="navigateTo('modul1')" id="nav-modul1" class="flex flex-col items-center text-slate-400 hover:text-indigo-600 font-semibold text-xs transition">
+                <i class="fa-solid fa-1 text-lg mb-0.5"></i>
+                <span>M1</span>
+            </button>
+            <button onclick="navigateTo('modul2')" id="nav-modul2" class="flex flex-col items-center text-slate-400 hover:text-indigo-600 font-semibold text-xs transition">
+                <i class="fa-solid fa-2 text-lg mb-0.5"></i>
+                <span>M2</span>
+            </button>
+            <button onclick="navigateTo('modul3')" id="nav-modul3" class="flex flex-col items-center text-slate-400 hover:text-indigo-600 font-semibold text-xs transition">
+                <i class="fa-solid fa-3 text-lg mb-0.5"></i>
+                <span>M3</span>
+            </button>
+            <button onclick="navigateTo('modul4')" id="nav-modul4" class="flex flex-col items-center text-slate-400 hover:text-indigo-600 font-semibold text-xs transition">
+                <i class="fa-solid fa-4 text-lg mb-0.5"></i>
+                <span>M4</span>
+            </button>
+            <button onclick="navigateTo('modul5')" id="nav-modul5" class="flex flex-col items-center text-slate-400 hover:text-indigo-600 font-semibold text-xs transition">
+                <i class="fa-solid fa-5 text-lg mb-0.5"></i>
+                <span>M5</span>
+            </button>
+            <button onclick="navigateTo('modul6')" id="nav-modul6" class="flex flex-col items-center text-slate-400 hover:text-indigo-600 font-semibold text-xs transition">
+                <i class="fa-solid fa-6 text-lg mb-0.5"></i>
+                <span>M6</span>
+            </button>
+            <button onclick="navigateTo('evaluasi')" id="nav-evaluasi" class="flex flex-col items-center text-slate-400 hover:text-indigo-600 font-semibold text-xs transition">
+                <i class="fa-solid fa-trophy text-lg mb-0.5"></i>
+                <span>Uji</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- FOOTER -->
+    <footer class="py-4 text-center text-xs text-slate-400 dark:text-slate-500 pb-20 sm:pb-6">
+        SMK NEGERI 1 JABON 2026/2027 | Informatika X TP 1.3 • Guru Pengembang: Masitah Zulfiah, S.Kom.
+    </footer>
+
+    <!-- ABOUT MODAL -->
+    <div id="aboutModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 relative shadow-2xl">
+            <button onclick="closeAboutModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center space-x-3">
+                <div id="logoAbout" class="w-12 h-12 rounded-2xl bg-brand-school text-white flex items-center justify-center text-xl font-bold overflow-hidden">
+                    <span id="logoAboutText">SMKN 1</span>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold font-heading text-brand-school dark:text-indigo-400">Tentang Media Pembelajaran</h3>
+                    <p class="text-xs text-slate-500">Solusi Masalah Diskrit • Informatika Kelas X</p>
+                </div>
+            </div>
+            <div class="space-y-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-b border-indigo-100 dark:border-slate-800 py-3">
+                <p><b>Satuan Pendidikan:</b> SMK Negeri 1 Jabon, Kabupaten Sidoarjo, Jawa Timur.</p>
+                <p><b>Kepala Sekolah:</b> Nur Faridah Ilmianah, S.Kom., MT.</p>
+                <p><b>Guru Pengembang:</b> Masitah Zulfiah, S.Kom.</p>
+                <p><b>Mata Pelajaran:</b> Informatika, Kelas X, Semester Gasal, Tahun Pelajaran 2026/2027.</p>
+                <p class="pt-2 text-indigo-600 dark:text-indigo-400 font-medium">Media ini dirancang khusus dengan pendekatan pembelajaran mendalam berkesadaran, bermakna, dan menggembirakan untuk siswa jurusan DPB, TEI, dan DKV.</p>
+            </div>
+            <div class="text-right">
+                <button onclick="closeAboutModal()" class="bg-brand-primary text-white font-bold px-6 py-2.5 rounded-xl text-xs hover:bg-indigo-700 transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEACHER HINT MODAL -->
+    <div id="teacherModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 relative shadow-2xl">
+            <button onclick="closeTeacherModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-2xl bg-brand-accent text-slate-900 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold font-heading text-slate-800 dark:text-slate-100" id="teacher-modal-title">Petunjuk Guru</h3>
+                    <p class="text-xs text-slate-500">Panduan Pembelajaran & Kunci Jawaban</p>
+                </div>
+            </div>
+            <div id="teacher-modal-content" class="space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-b border-indigo-100 dark:border-slate-800 py-3 max-h-64 overflow-y-auto"></div>
+            <div class="text-right">
+                <button onclick="closeTeacherModal()" class="bg-brand-primary text-white font-bold px-6 py-2.5 rounded-xl text-xs hover:bg-indigo-700 transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LOGO_SEKOLAH = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAACoCAMAAAB37JSaAAAAwFBMVEX////0///v/0r//wn//wH+/wP7/wP4/Df9/AHu74HZ2aG7912P63vExaFp14g3z7YYy+kbwuMJ0f0Mzv0LzPkIyf0Lyu8Lx/QB0f0Bz/wBzv4BzvkCzf4Azf4BzfoCzP8AzP8CzP4AzP4AzP0CzPoEy/4Cy/8By/8Dyv8Dyf8Cy/sDyfqwr5Bxmo4astgYmbt/f11eX0MVf5wTXnM3QzIpLiAGPE0CKzsbHBkEHiUIDA4DAwUIAAYAAAwAAAAAAAAuUeSYAAAAQHRSTlP///////////////////////////////////////////////////////////////////////////////////8AwnuxRAAALFNJREFUeNrVXYlC20i2NRgww2bLUslSlfaq0greN2xg/v+v3rklA05CQpJO5s2oO+kE2/LRrXPPXWrpzr//x67O37ntar9f/S8B3j69vLxs/2cAL3cvu/Uavy3/NwCvnl8e55a1eNw/rf4XAG9f9uvJSKvRZL3/C7To/AU6LMbDaMQqe7z4C7To/HFv28wHge9LXVV6MN+8PG3/iwEvd8+79cRmIih4JHVe2JP18x828p8EvNq/PC7GdsVUaLuuUyhRG1r8UUn+g4C3z8+gA5O8aZzJGshZEDQCtHj+k77X+ZPeth7bjai1N5pvNuv13GUsy53BeLHf/zla/CnAyz2Jr50ETcHGi81iPKHfbN/nmQ1Jftkv/7sAt+KrRFAxONpmbnnKnW/ggGGgFMeP9vvtfxHgVnztWvDGtuaPgM4a5Y8McltpJv+gJP8JwNs9iS9jOq6c8eJxYQ1FwZpIm7+A1poJgef4M5Lc+RPmfaZYzFij7ckG0LWUaVUxFpFEbCZ2oZtIQjheXnb/BYCN+FrDSvsR6LCBULBRUTQqZbKoA3tMtGBZwSJDi3+eDnX+MR1IfHWtMzFo6dAEodSJwKVD4ToWqYWbVloxqN3z8/b/FfCMxHdiS5aK4Qh0mDgskrFWkitdpGUV+g1z6OcuK4Oa4sluv/t/BLwy4uuKqKIYTA6WcZklcZIkWZJlcRxyLhvb6DIyjEgNKUverf6/ABvxHYyUX7FWwiDEaZYldGVZFuZlGWcchrWMJLMipT+un/+RJHf+ofg6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"; 
+
+        let appState = {
+            currentView: 'home',
+            department: 'DPB',
+            xp: 0,
+            streak: 1,
+            completedModules: []
+        };
+
+        const deptContexts = {
+            DPB: {
+                name: "DPB (Desain Produksi Busana)",
+                m1: "Dalam menyiapkan rancangan busana dan tata pola jahit, setiap instruksi potong kain atau syarat ukuran harus berupa pernyataan yang pasti (proposisi) agar tidak salah potong.",
+                m2: "Pada proses otomatisasi mesin jahit atau seleksi kualitas kain, aturan keputusan JIKA jenis kain katun MAKA suhu setrika sedang harus diuji batasnya.",
+                m3: "Menghitung total variasi model pakaian dari pilihan bahan kain, warna benang, dan jenis kancing menggunakan aturan perkalian kombinatorika.",
+                m4: "Mengoptimalkan pemotongan kain gulungan agar sisa perca seminimal mungkin dengan batasan lebar bahan.",
+                m5: "Memetakan jalur distribusi alat jahit dari gudang menuju meja potong dan mesin jahit menggunakan graf terpendek."
+            },
+            TEI: {
+                name: "TEI (Teknik Elektronika Industri)",
+                m1: "Dalam merakit rangkaian gerbang logika pada mikrokontroler dan sensor alarm, setiap input tegangan harus bernilai pasti Benar (1) atau Salah (0).",
+                m2: "Sistem pengaman otomatis pabrik menggunakan gerbang logika DAN/ATAU untuk memicu alarm bahaya hanya jika sensor panas dan tekanan mencapai batas kritis.",
+                m3: "Menghitung banyak kemungkinan kombinasi sandi kunci pintu akses laboratorium elektronika menggunakan permutasi dan aturan perkalian.",
+                m4: "Menentukan alokasi beban daya listrik maksimum pada transformator menggunakan strategi optimasi ransel (knapsack).",
+                m5: "Analisis jalur kabel sirkuit tercetak (PCB) antar komponen elektronik menggunakan graf berbobot minimal."
+            },
+            DKV: {
+                name: "DKV (Desain Komunikasi Visual)",
+                m1: "Dalam menyusun layout poster atau aturan warna UI/UX aplikasi, setiap syarat komposisi visual harus dievaluasi dengan logika proposisi yang jelas.",
+                m2: "Aturan interaksi tombol pada aplikasi digital (JIKA tombol ditekan DAN BUKAN disable MAKA buka halaman) memerlukan pengujian kondisi gabungan.",
+                m3: "Menghitung permutasi susunan elemen visual, variasi palet warna, dan tata letak banner promosi pameran sekolah.",
+                m4: "Mengoptimalkan pemilihan aset gambar dan ukuran resolusi file grafis dalam batasan memori penyimpanan pameran.",
+                m5: "Merancang struktur navigasi menu aplikasi interaktif (sitemap) sebagai pemodelan graf berarah."
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (LOGO_SEKOLAH) {
+                document.getElementById('logoContainer').innerHTML = `<img src="${LOGO_SEKOLAH}" class="w-full h-full object-cover" alt="Logo Sekolah">`;
+                document.getElementById('logoAbout').innerHTML = `<img src="${LOGO_SEKOLAH}" class="w-full h-full object-contain p-1 bg-white" alt="Logo SMK Negeri 1 Jabon">`;
+            }
+            initThreeJS();
+            loadState();
+            initModule1();
+            initModule2();
+            initModule3();
+            initModule4();
+            initModule5();
+            initModule6();
+            initEvaluation();
+            updateDeptContext();
+        });
+
+        function navigateTo(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById('view-' + viewId);
+            if (target) {
+                target.classList.remove('hidden');
+                appState.currentView = viewId;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            ['home', 'modul1', 'modul2', 'modul3', 'modul4', 'modul5', 'modul6', 'evaluasi'].forEach(id => {
+                const btn = document.getElementById('nav-' + id);
+                if (btn) {
+                    if (id === viewId || (viewId.startsWith('modul') && id === 'modul' + viewId.replace('modul',''))) {
+                        btn.className = "flex flex-col items-center text-brand-primary dark:text-indigo-400 font-bold text-xs transition";
+                    } else {
+                        btn.className = "flex flex-col items-center text-slate-400 hover:text-indigo-600 font-semibold text-xs transition";
+                    }
+                }
+            });
+        }
+
+        function changeDepartment(dept) {
+            appState.department = dept;
+            updateDeptContext();
+            showToast(`Konteks diubah ke Jurusan ${dept}!`);
+            saveState();
+        }
+
+        function updateDeptContext() {
+            const ctx = deptContexts[appState.department];
+            document.querySelectorAll('.dept-label').forEach(el => el.innerText = ctx.name);
+            ['m1','m2','m3','m4','m5'].forEach(m => {
+                const el = document.querySelector(`.dept-intro-${m}`);
+                if (el) el.innerText = ctx[m];
+            });
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.classList.contains('light')) {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                icon.className = "fa-solid fa-sun text-amber-400";
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                icon.className = "fa-solid fa-moon";
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function initThreeJS() {
+            const container = document.getElementById('canvas3d-container');
+            if (!container) return;
+            try {
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                
+                container.innerHTML = '';
+                container.appendChild(renderer.domElement);
+
+                const geometry1 = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+                const material1 = new THREE.MeshNormalMaterial();
+                const cube = new THREE.Mesh(geometry1, material1);
+                cube.position.x = -1.2;
+                scene.add(cube);
+
+                const geometry2 = new THREE.TorusGeometry(1, 0.4, 16, 100);
+                const material2 = new THREE.MeshStandardMaterial({ color: 0xec4899, roughness: 0.3, metalness: 0.8 });
+                const torus = new THREE.Mesh(geometry2, material2);
+                torus.position.x = 1.2;
+                scene.add(torus);
+
+                const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+                scene.add(ambientLight);
+                const pointLight = new THREE.PointLight(0xffffff, 2);
+                pointLight.position.set(5, 5, 5);
+                scene.add(pointLight);
+
+                camera.position.z = 5;
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    cube.rotation.x += 0.01;
+                    cube.rotation.y += 0.015;
+                    torus.rotation.x += 0.01;
+                    torus.rotation.y += 0.01;
+                    renderer.render(scene, camera);
+                }
+                animate();
+
+                window.addEventListener('resize', () => {
+                    if (container.clientWidth && container.clientHeight) {
+                        camera.aspect = container.clientWidth / container.clientHeight;
+                        camera.updateProjectionMatrix();
+                        renderer.setSize(container.clientWidth, container.clientHeight);
+                    }
+                });
+            } catch (e) {
+                console.log("Three.js fallback active.");
+            }
+        }
+
+        // ================= MODUL 1 =================
+        const m1Sentences = [
+            { id: 1, text: "Surabaya adalah ibu kota Provinsi Jawa Timur", type: "proposisi" },
+            { id: 2, text: "2 + 3 = 6", type: "proposisi" },
+            { id: 3, text: "Tutuplah pintu itu!", type: "bukan" },
+            { id: 4, text: "Apakah kamu sudah mengerjakan tugas?", type: "bukan" },
+            { id: 5, text: "Film itu sangat bagus", type: "bukan" },
+            { id: 6, text: "Semua segitiga memiliki tiga sisi", type: "proposisi" },
+            { id: 7, text: "x + 2 = 5", type: "bukan" },
+            { id: 8, text: "Matahari terbit dari barat", type: "proposisi" }
+        ];
+
+        function initModule1() {
+            const container = document.getElementById('m1-sort-cards');
+            container.innerHTML = '';
+            m1Sentences.forEach(s => {
+                const card = document.createElement('div');
+                card.className = "p-3 bg-white dark:bg-slate-800 border border-indigo-100 dark:border-slate-700 rounded-xl text-xs font-semibold shadow-sm flex flex-col justify-between";
+                card.innerHTML = `<span>${s.text}</span><div class="mt-2 flex gap-1"><button onclick="sortSentence(${s.id}, 'proposisi')" class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-[10px] font-bold">Proposisi</button><button onclick="sortSentence(${s.id}, 'bukan')" class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-[10px] font-bold">Bukan</button></div>`;
+                container.appendChild(card);
+            });
+            initTruthTable();
+            initContestStudents();
+            initM1Quiz();
+        }
+
+        function sortSentence(id, target) {
+            const item = m1Sentences.find(s => s.id === id);
+            const correct = item.type === target;
+            const feedback = document.getElementById('m1-sort-feedback');
+            if (correct) {
+                feedback.innerHTML = `<span class="text-emerald-600"><i class="fa-solid fa-check mr-1"></i> Benar! "${item.text}" adalah ${target === 'proposisi' ? 'Proposisi' : 'Bukan Proposisi'}.</span>`;
+                showToast("Pilihan tepat!");
+            } else {
+                feedback.innerHTML = `<span class="text-rose-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Kurang tepat. Coba pikirkan kembali sifat kalimat tersebut.</span>`;
+            }
+        }
+
+        let logicVars = { p: true, q: true, r: false };
+        function toggleLogicVar(v) {
+            logicVars[v] = !logicVars[v];
+            const btn = document.getElementById('var-' + v);
+            if (logicVars[v]) {
+                btn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow";
+                btn.innerText = "Benar (B)";
+            } else {
+                btn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 text-white shadow";
+                btn.innerText = "Salah (S)";
+            }
+            updateTruthSimulator();
+        }
+
+        function updateTruthSimulator() {
+            const p = logicVars.p, q = logicVars.q, r = logicVars.r;
+            document.getElementById('res-and').innerText = (p && q) ? "Benar" : "Salah";
+            document.getElementById('res-or').innerText = (p || q) ? "Benar" : "Salah";
+            document.getElementById('res-not').innerText = (!p) ? "Benar" : "Salah";
+            document.getElementById('res-complex').innerText = ((p || q) && !r) ? "Benar" : "Salah";
+        }
+
+        const truthTableData = [
+            { p: true, q: true, r: true, ans: 'S' },
+            { p: true, q: true, r: false, ans: 'B' },
+            { p: true, q: false, r: true, ans: 'S' },
+            { p: true, q: false, r: false, ans: 'B' },
+            { p: false, q: true, r: true, ans: 'S' },
+            { p: false, q: true, r: false, ans: 'B' },
+            { p: false, q: false, r: true, ans: 'S' },
+            { p: false, q: false, r: false, ans: 'S' }
+        ];
+
+        function initTruthTable() {
+            const tbody = document.getElementById('truth-table-body');
+            tbody.innerHTML = '';
+            truthTableData.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-2 border">${row.p ? 'B' : 'S'}</td>
+                    <td class="p-2 border">${row.q ? 'B' : 'S'}</td>
+                    <td class="p-2 border">${row.r ? 'B' : 'S'}</td>
+                    <td class="p-2 border"><input type="text" maxlength="1" data-index="${idx}" class="w-10 text-center font-bold uppercase p-1 rounded border border-indigo-200 bg-white dark:bg-slate-900 table-input-m1"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function checkTruthTable() {
+            const inputs = document.querySelectorAll('.table-input-m1');
+            let allCorrect = true;
+            inputs.forEach((input, idx) => {
+                const val = input.value.trim().toUpperCase();
+                if (val === truthTableData[idx].ans) {
+                    input.className = "w-10 text-center font-bold uppercase p-1 rounded border border-emerald-500 bg-emerald-50 text-emerald-700";
+                } else {
+                    input.className = "w-10 text-center font-bold uppercase p-1 rounded border border-rose-500 bg-rose-50 text-rose-700";
+                    allCorrect = false;
+                }
+            });
+            const fb = document.getElementById('table-feedback');
+            if (allCorrect) {
+                fb.innerHTML = `<span class="text-emerald-600"><i class="fa-solid fa-circle-check"></i> Luar biasa! Semua 8 baris tabel kebenaran benar (S, B, S, B, S, B, S, S).</span>`;
+            } else {
+                fb.innerHTML = `<span class="text-rose-600"><i class="fa-solid fa-circle-xmark"></i> Masih ada yang keliru. Ingat: (p OR q) AND NOT r.</span>`;
+            }
+        }
+
+        let contestOp = 'AND';
+        const students = [
+            { name: "Andi", score: 85, attend: 95 },
+            { name: "Budi", score: 90, attend: 85 },
+            { name: "Citra", score: 78, attend: 98 },
+            { name: "Dewi", score: 80, attend: 90 },
+            { name: "Eko", score: 70, attend: 60 }
+        ];
+
+        function setContestOperator(op) {
+            contestOp = op;
+            document.getElementById('btn-op-and').className = op === 'AND' ? "px-4 py-2 rounded-xl text-xs font-bold bg-brand-primary text-white shadow" : "px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200";
+            document.getElementById('btn-op-or').className = op === 'OR' ? "px-4 py-2 rounded-xl text-xs font-bold bg-brand-primary text-white shadow" : "px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200";
+            renderContestStudents();
+        }
+
+        function initContestStudents() { renderContestStudents(); }
+
+        function renderContestStudents() {
+            const container = document.getElementById('contest-students');
+            container.innerHTML = '';
+            let qualified = [];
+            students.forEach(st => {
+                const condScore = st.score >= 80;
+                const condAttend = st.attend >= 90;
+                let pass = contestOp === 'AND' ? (condScore && condAttend) : (condScore || condAttend);
+                if (pass) qualified.push(st.name);
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-2xl border text-center space-y-1 ${pass ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300' : 'bg-slate-50 dark:bg-slate-800 border-slate-200'}`;
+                card.innerHTML = `<div class="font-bold text-xs">${st.name}</div><div class="text-[10px] text-slate-500">Nilai: ${st.score} | Hadir: ${st.attend}%</div><div class="text-[10px] font-bold ${pass ? 'text-emerald-600' : 'text-slate-400'}">${pass ? 'BERHAK' : 'TIDAK'}</div>`;
+                container.appendChild(card);
+            });
+            document.getElementById('contest-explanation').innerHTML = `<b>Analisis Operator ${contestOp}:</b> Siswa yang berhak ikut seleksi adalah: <b>${qualified.join(', ')}</b>. Operator AND lebih ketat dibanding OR.`;
+        }
+
+        function initM1Quiz() {
+            document.getElementById('m1-quiz-container').innerHTML = `
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">1. Jika p benar dan q salah, tentukan hasil p AND q dan p OR q!</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-100 text-indigo-700 font-bold">Salah dan Benar</button>
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">Benar dan Salah</button>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">2. Apakah kalimat "Tutuplah jendela itu!" merupakan proposisi?</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">Ya, karena pasti benar</button>
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-100 text-indigo-700 font-bold">Bukan, karena kalimat perintah</button>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">3. Apa kebalikan (NOT) dari pernyataan "Nilai ujian 80 atau lebih"?</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-100 text-indigo-700 font-bold">Nilai kurang dari 80</button>
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">Nilai 80 atau kurang</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================= MODUL 2 =================
+        let doorState = { person: true, lock: false };
+        function initModule2() {
+            updateDoorSimulator();
+            initScholarshipCases();
+            initHygieneTable();
+            initM2Quiz();
+        }
+
+        function toggleDoorSensor(type) {
+            doorState[type] = !doorState[type];
+            const btn = document.getElementById('btn-sensor-' + type);
+            if (type === 'person') {
+                btn.className = doorState.person ? "px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow" : "px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 text-white shadow";
+                btn.innerText = doorState.person ? "Terdeteksi (B)" : "Tidak Ada (S)";
+            } else {
+                btn.className = doorState.lock ? "px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 text-white shadow" : "px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow";
+                btn.innerText = doorState.lock ? "Terkunci (B)" : "Tidak Terkunci (S)";
+            }
+            updateDoorSimulator();
+        }
+
+        function updateDoorSimulator() {
+            const open = doorState.person && !doorState.lock;
+            const visual = document.getElementById('door-visual');
+            const text = document.getElementById('door-status-text');
+            if (open) {
+                visual.className = "w-48 h-32 border-4 border-emerald-500 rounded-xl flex items-center justify-center font-fun text-xl tracking-wider transition-all duration-500 bg-emerald-950/50 shadow-inner";
+                visual.innerText = "PINTU TERBUKA";
+                text.innerText = "Tindakan Sistem: Pintu Membuka Otomatis";
+            } else {
+                visual.className = "w-48 h-32 border-4 border-rose-500 rounded-xl flex items-center justify-center font-fun text-xl tracking-wider transition-all duration-500 bg-rose-950/50 shadow-inner";
+                visual.innerText = "PINTU TERTUTUP";
+                text.innerText = "Tindakan Sistem: Pintu Tetap Terkunci";
+            }
+        }
+
+        const scholarshipData = [
+            { id: 1, desc: "Penghasilan rendah, Nilai 80, Bukan juara", correct: true },
+            { id: 2, desc: "Penghasilan rendah, Nilai 70, Bukan juara", correct: false },
+            { id: 3, desc: "Penghasilan tidak rendah, Nilai 90, Juara olimpiade", correct: true },
+            { id: 4, desc: "Penghasilan tidak rendah, Nilai 85, Bukan juara", correct: false },
+            { id: 5, desc: "Penghasilan rendah, Nilai 75, Juara olimpiade (Nilai Batas)", correct: true }
+        ];
+
+        function initScholarshipCases() {
+            const container = document.getElementById('scholarship-cases');
+            container.innerHTML = '';
+            scholarshipData.forEach(sc => {
+                const div = document.createElement('div');
+                div.className = "p-3 bg-white dark:bg-slate-800 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-2";
+                div.innerHTML = `
+                    <div class="text-xs font-semibold">Kasus ${sc.id}: ${sc.desc}</div>
+                    <div class="flex gap-2">
+                        <button onclick="checkScholarship(${sc.id}, true, this)" class="px-3 py-1 rounded-lg text-xs font-bold bg-indigo-100 text-indigo-700">Layak</button>
+                        <button onclick="checkScholarship(${sc.id}, false, this)" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-200 dark:bg-slate-700">Tidak Layak</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkScholarship(id, userChoice, btn) {
+            const item = scholarshipData.find(s => s.id === id);
+            const parent = btn.parentElement;
+            parent.querySelectorAll('button').forEach(b => b.className = "px-3 py-1 rounded-lg text-xs font-bold bg-slate-200 dark:bg-slate-700");
+            if (userChoice === item.correct) {
+                btn.className = "px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 text-white";
+                showToast("Keputusan Benar!");
+            } else {
+                btn.className = "px-3 py-1 rounded-lg text-xs font-bold bg-rose-500 text-white shake";
+                showToast("Periksa kembali aturan kondisinya.");
+            }
+        }
+
+        const hygieneTableData = [
+            { p: true,  q: false, r: true,  res: true, note: "Celah: Rekomendasi wali kelas" },
+            { p: true,  q: false, r: false, res: true, note: "Piket lengkap, tanpa pelanggaran" },
+            { p: true,  q: true,  r: true,  res: true, note: "Celah: Rekomendasi wali kelas" },
+            { p: true,  q: true,  r: false, res: false, note: "Ada pelanggaran" },
+            { p: false, q: false, r: true,  res: true, note: "Celah: Rekomendasi wali kelas" },
+            { p: false, q: false, r: false, res: false, note: "Tidak lengkap" },
+            { p: false, q: true,  r: true,  res: true, note: "Celah: Rekomendasi wali kelas" },
+            { p: false, q: true,  r: false, res: false, note: "Tidak memenuhi" }
+        ];
+
+        function initHygieneTable() {
+            const tbody = document.getElementById('hygiene-table-body');
+            tbody.innerHTML = '';
+            hygieneTableData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-2 border">${row.p ? 'B' : 'S'}</td>
+                    <td class="p-2 border">${row.q ? 'B' : 'S'}</td>
+                    <td class="p-2 border">${row.r ? 'B' : 'S'}</td>
+                    <td class="p-2 border font-bold ${row.res ? 'text-emerald-600' : 'text-rose-600'}">${row.res ? 'BOLEH' : 'TIDAK'}</td>
+                    <td class="p-2 border text-[10px] text-slate-500">${row.note}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function initM2Quiz() {
+            document.getElementById('m2-quiz-container').innerHTML = `
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">1. Aturan pintu "ada_orang DAN BUKAN terkunci", jika keduanya benar, bagaimana kondisi pintu?</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">Tetap tertutup</button>
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-pink-100 text-pink-700 font-bold">Membuka otomatis</button>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">2. Implikasi p → q bernilai SALAH pada kondisi apa?</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-pink-100 text-pink-700 font-bold">Hanya jika p benar dan q salah</button>
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">Jika p dan q salah</button>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">3. Apakah siswa bernilai tepat 75 memenuhi syarat "nilai 75 atau lebih"?</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-pink-100 text-pink-700 font-bold">Memenuhi</button>
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">Tidak memenuhi</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================= MODUL 3 =================
+        function initModule3() {
+            calcCombo();
+            calcPassword();
+            initM3Exercises();
+            initM3Quiz();
+        }
+
+        function calcCombo() {
+            const t = parseInt(document.getElementById('combo-tops').value);
+            const b = parseInt(document.getElementById('combo-bottoms').value);
+            const s = parseInt(document.getElementById('combo-shoes').value);
+            document.getElementById('combo-result').innerText = t * b * s;
+        }
+
+        function randomizeCombo() { showToast("Gaya acak terpilih!"); }
+
+        function calcPassword() {
+            const len = parseInt(document.getElementById('pass-length').value);
+            document.getElementById('pass-len-val').innerText = len;
+            let charsetSize = 0;
+            if (document.getElementById('char-num').checked) charsetSize += 10;
+            if (document.getElementById('char-lower').checked) charsetSize += 26;
+            if (document.getElementById('char-upper').checked) charsetSize += 26;
+
+            if (charsetSize === 0) {
+                document.getElementById('pass-possibilities').innerText = "0";
+                return;
+            }
+            const total = Math.pow(charsetSize, len);
+            document.getElementById('pass-possibilities').innerText = total.toLocaleString('id-ID');
+            document.getElementById('pass-time-slow').innerText = formatTime(total);
+            document.getElementById('pass-time-fast').innerText = total / 1000000000 < 1 ? (total / 1000000).toFixed(2) + " ms" : formatTime(total / 1000000000);
+        }
+
+        function formatTime(sec) {
+            if (sec < 60) return sec.toFixed(1) + " detik";
+            if (sec < 3600) return (sec / 60).toFixed(1) + " menit";
+            if (sec < 86400) return (sec / 3600).toFixed(1) + " jam";
+            if (sec < 31536000) return (sec / 86400).toFixed(1) + " hari";
+            return (sec / 31536000).toFixed(1) + " tahun";
+        }
+
+        const m3ExercisesData = [
+            { id: 1, q: "Menyusun setelan dari 3 baju, 2 celana, 2 sepatu", ans: 12 },
+            { id: 2, q: "Banyak cara menyusun duduk 5 siswa pada 5 kursi (5!)", ans: 120 },
+            { id: 3, q: "Plat nomor kendaraan: 2 huruf awal + 3 angka", ans: 676000 },
+            { id: 4, q: "Memilih 1 buku dari 5 buku sains ATAU 3 majalah", ans: 8 },
+            { id: 5, q: "Memilih Ketua dan Sekretaris dari 6 calon", ans: 30 },
+            { id: 6, q: "Paket menu makan: 4 nasi, 3 lauk, 2 minuman", ans: 24 }
+        ];
+
+        function initM3Exercises() {
+            const container = document.getElementById('m3-exercises');
+            container.innerHTML = '';
+            m3ExercisesData.forEach(ex => {
+                const div = document.createElement('div');
+                div.className = "p-4 bg-white dark:bg-slate-800 rounded-2xl border space-y-2";
+                div.innerHTML = `
+                    <div class="text-xs font-bold">${ex.id}. ${ex.q}</div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input type="number" id="ex-ans-${ex.id}" placeholder="Jawaban angka" class="text-xs p-2 rounded-xl border bg-slate-50 dark:bg-slate-900 w-36">
+                        <button onclick="checkM3Ex(${ex.id}, ${ex.ans})" class="bg-amber-500 text-slate-900 font-bold px-4 py-2 rounded-xl text-xs">Cek</button>
+                        <span id="ex-fb-${ex.id}" class="text-xs font-semibold"></span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkM3Ex(id, correctVal) {
+            const val = parseInt(document.getElementById(`ex-ans-${id}`).value);
+            const fb = document.getElementById(`ex-fb-${id}`);
+            if (val === correctVal) {
+                fb.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fa-solid fa-check"></i> Benar!</span>`;
+            } else {
+                fb.innerHTML = `<span class="text-rose-600 font-bold"><i class="fa-solid fa-xmark"></i> Kurang tepat.</span>`;
+            }
+        }
+
+        function initM3Quiz() {
+            document.getElementById('m3-quiz-container').innerHTML = `
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">1. Berapa banyak kombinasi PIN 4 angka (0000 sampai 9999)?</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-amber-100 text-amber-800 font-bold">10.000</button>
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">1.000</button>
+                    </div>
+                </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">2. Susunan duduk 3 siswa pada 3 kursi adalah...</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">9</button>
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-amber-100 text-amber-800 font-bold">6 (3!)</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================= MODUL 4 (OPTIMASI) =================
+        function initModule4() {
+            initKnapsack();
+            initSched();
+            initM4Quiz();
+        }
+
+        function testGreedyChange(amt) {
+            document.getElementById('change-result-box').innerHTML = `<b>Analisis Kasus Rp6.000:</b><br>
+            - Strategi Greedy (pilih terbesar dulu): Memilih Rp4.000 + Rp1.000 + Rp1.000 = <b>3 lembar</b>.<br>
+            - Solusi Terbaik Mutlak: Memilih Rp3.000 + Rp3.000 = <b>2 lembar</b>.<br>
+            <i>Kesimpulan:</i> Greedy tidak selalu menghasilkan jumlah lembar paling sedikit pada pecahan tertentu!`;
+        }
+
+        let knapsackState = { A: false, B: false, C: false, D: false };
+        const itemsData = { A: {w:6, v:30}, B: {w:5, v:28}, C: {w:5, v:27}, D: {w:4, v:22} };
+
+        function initKnapsack() { updateKnapsackUI(); }
+
+        function toggleKnapsackItem(itemKey) {
+            knapsackState[itemKey] = !knapsackState[itemKey];
+            const btn = document.getElementById('k-btn-' + itemKey);
+            if (knapsackState[itemKey]) {
+                btn.className = "w-full py-1 bg-emerald-500 text-white text-xs rounded font-bold";
+                btn.innerText = "Dipilih";
+            } else {
+                btn.className = "w-full py-1 bg-slate-100 dark:bg-slate-700 text-xs rounded font-bold";
+                btn.innerText = "Pilih";
+            }
+            updateKnapsackUI();
+        }
+
+        function updateKnapsackUI() {
+            let totalW = 0, totalV = 0;
+            Object.keys(knapsackState).forEach(k => {
+                if (knapsackState[k]) {
+                    totalW += itemsData[k].w;
+                    totalV += itemsData[k].v;
+                }
+            });
+            document.getElementById('k-weight').innerText = totalW;
+            document.getElementById('k-value').innerText = totalV;
+            if (totalW > 10) {
+                showToast("Peringatan: Ransel melebihi kapasitas 10 kg!");
+            }
+        }
+
+        function solveKnapsackBest() {
+            Object.keys(knapsackState).forEach(k => knapsackState[k] = false);
+            ['B','C'].forEach(k => {
+                knapsackState[k] = true;
+                const btn = document.getElementById('k-btn-' + k);
+                btn.className = "w-full py-1 bg-emerald-500 text-white text-xs rounded font-bold";
+                btn.innerText = "Dipilih";
+            });
+            updateKnapsackUI();
+            showToast("Solusi terbaik ditemukan: Barang B + C (Berat 10 kg, Nilai 55)!");
+        }
+
+        const schedData = [
+            { name: "Pramuka", start: 13, end: 15 },
+            { name: "Paskibra", start: 14, end: 16 },
+            { name: "PMR", start: 15, end: 17 },
+            { name: "Futsal", start: 16, end: 18 },
+            { name: "Robotik", start: 17, end: 19 }
+        ];
+
+        function initSched() {
+            const container = document.getElementById('sched-container');
+            container.innerHTML = '';
+            schedData.forEach(sc => {
+                const div = document.createElement('div');
+                div.className = "p-3 bg-white dark:bg-slate-800 rounded-xl border text-center space-y-1";
+                div.innerHTML = `<div class="font-bold text-xs">${sc.name}</div><div class="text-[10px] text-slate-500">${sc.start}.00 - ${sc.end}.00</div><button onclick="showSchedOptimal()" class="mt-1 px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-[10px] font-bold">Info</button>`;
+                container.appendChild(div);
+            });
+            document.getElementById('sched-feedback').innerText = "Strategi terbaik: Pilih kegiatan yang selesai paling awal (Pramuka, PMR, Robotik = 3 kegiatan).";
+        }
+
+        function showSchedOptimal() {
+            showToast("Kegiatan tanpa bentrok: Pramuka, PMR, dan Robotik.");
+        }
+
+        function initM4Quiz() {
+            document.getElementById('m4-quiz-container').innerHTML = `
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">1. Mengapa strategi Brute Force sulit digunakan untuk 30 barang?</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 font-bold">Karena ada 2^30 kombinasi yang sangat banyak</button>
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">Karena barangnya terlalu berat</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================= MODUL 5 (GRAF) =================
+        const graphNodes = [
+            { id: "Gerbang", deg: 2, conn: "Kantin (100m), Perpustakaan (160m)" },
+            { id: "Kantin", deg: 3, conn: "Gerbang (100m), Perpustakaan (50m), Lab (200m)" },
+            { id: "Perpustakaan", deg: 4, conn: "Gerbang (160m), Kantin (50m), Lab (120m), Aula (190m)" },
+            { id: "Lab", deg: 4, conn: "Kantin (200m), Perpustakaan (120m), Aula (60m), Bengkel (90m)" },
+            { id: "Aula", deg: 3, conn: "Perpustakaan (190m), Lab (60m), Bengkel (110m)" },
+            { id: "Bengkel", deg: 2, conn: "Lab (90m), Aula (110m)" }
+        ];
+
+        function initModule5() {
+            const container = document.getElementById('graph-nodes-container');
+            container.innerHTML = '';
+            graphNodes.forEach(node => {
+                const div = document.createElement('div');
+                div.className = "p-3 bg-white dark:bg-slate-800 rounded-xl border cursor-pointer hover:border-cyan-500 text-center space-y-1";
+                div.onclick = () => selectGraphNode(node.id);
+                div.innerHTML = `<div class="font-bold text-xs text-cyan-600">${node.id}</div><div class="text-[10px] text-slate-500">Derajat: ${node.deg}</div>`;
+                container.appendChild(div);
+            });
+            initM5Quiz();
+        }
+
+        function selectGraphNode(nodeId) {
+            const node = graphNodes.find(n => n.id === nodeId);
+            document.getElementById('graph-info-box').innerHTML = `<b>Simpul:</b> ${node.id} | <b>Derajat:</b> ${node.deg} | <b>Terhubung ke:</b> ${node.conn}`;
+        }
+
+        function calcShortestPath(dest) {
+            const disp = document.getElementById('path-result-display');
+            if (dest === 'Aula') {
+                disp.innerHTML = `<b>Rute Terpendek Gerbang → Aula (330 meter):</b><br>Gerbang → Kantin (100m) → Perpustakaan (50m) → Lab (120m) → Aula (60m) = <b>330 m</b>.<br><i>Catatan:</i> Lewat Kantin ke Perpustakaan (150m) lebih pendek daripada langsung (160m).`;
+            } else {
+                disp.innerHTML = `<b>Rute Terpendek Gerbang → Bengkel (360 meter):</b><br>Gerbang → Kantin (100m) → Perpustakaan (50m) → Lab (120m) → Bengkel (90m) = <b>360 m</b>.`;
+            }
+            showToast(`Jalur terpendek ke ${dest} dihitung!`);
+        }
+
+        function initM5Quiz() {
+            document.getElementById('m5-quiz-container').innerHTML = `
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">1. Mengapa jalur dengan sisi paling sedikit belum tentu merupakan jalur terpendek?</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-cyan-100 text-cyan-800 font-bold">Karena yang dijumlahkan adalah bobot (jarak), bukan jumlah sisi</button>
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">Karena simpulnya berbeda</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================= MODUL 6 (PROYEK) =================
+        function initModule6() {
+            initM6Quiz();
+        }
+
+        function copyProjectReport() {
+            const name = document.getElementById('rep-name').value || 'Tanpa Nama';
+            const theme = document.getElementById('rep-theme').value;
+            const p1 = document.getElementById('rep-p1').value;
+            const p2 = document.getElementById('rep-p2').value;
+
+            const text = `=== LAPORAN PROYEK DISKRIT SMK N 1 JABON ===\nNama: ${name}\nTema: ${theme}\n1. Rumusan Masalah: ${p1}\n2. Pemodelan & Solusi: ${p2}\n=============================================`;
+            
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            showToast("Laporan berhasil disalin ke clipboard!");
+        }
+
+        function initM6Quiz() {
+            document.getElementById('m6-quiz-container').innerHTML = `
+                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl space-y-2">
+                    <p class="text-xs font-bold">1. Langkah proyek mana yang bertugas membuat model tabel atau graf dari masalah nyata?</p>
+                    <div class="flex gap-2">
+                        <button onclick="checkQuizGen(this, true)" class="text-xs px-3 py-1.5 rounded-lg bg-violet-100 text-violet-800 font-bold">Abstraksi data</button>
+                        <button onclick="checkQuizGen(this, false)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold">Pengujian</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================= EVALUASI AKHIR =================
+        const evalQuestions = [
+            { type: 'mc', q: "1. Jika A bernilai Benar dan B bernilai Salah, berapakah nilai kebenaran A OR B?", options: ["Benar", "Salah"], correct: 0, reason: "Operator OR bernilai benar jika minimal satu proposisi bernilai benar." },
+            { type: 'mc', q: "2. Berapakah hasil evaluasi dari NOT(Benar AND Salah)?", options: ["Benar", "Salah"], correct: 0, reason: "(Benar AND Salah) adalah Salah, lalu di-NOT-kan menjadi Benar." },
+            { type: 'mc', q: "3. Berapa banyak kombinasi pakaian dari 3 baju, 2 celana, dan 2 sepatu?", options: ["7", "12", "24"], correct: 1, reason: "Aturan perkalian: 3 x 2 x 2 = 12." },
+            { type: 'mc', q: "4. Berapakah nilai dari faktorial 4 (4!)?", options: ["12", "24", "48"], correct: 1, reason: "4! = 4 x 3 x 2 x 1 = 24." },
+            { type: 'mc', q: "5. Pada graf dengan sisi A-B (bobot 3), B-D (4), A-C (1), C-D (3), berapakah jalur terpendek dari A ke D?", options: ["A-B-D (7)", "A-C-D (4)", "A-B-C-D (9)"], correct: 1, reason: "Jalur A-C-D bernilai 1 + 3 = 4, yang paling kecil." },
+            { type: 'short', q: "6. (Uraian) Hitunglah banyak plat nomor kendaraan yang terdiri dari 3 huruf awal diikuti 2 angka (misal: AB 12). (Ketik angka saja, contoh: 1757600)", ans: "1757600", reason: "26 x 26 x 26 x 10 x 10 = 1.757.600 kemungkinan." },
+            { type: 'short', q: "7. (Uraian) Tentukan hasil (A OR B) AND NOT C jika A=Benar, B=Salah, C=Benar. (Isi: B atau S)", ans: "S", reason: "(B OR S) adalah Benar, NOT C (karena C Benar) adalah Salah, jadi Benar AND Salah = Salah (S)." }
+        ];
+
+        function initEvaluation() {
+            const container = document.getElementById('eval-form-container');
+            container.innerHTML = '';
+            evalQuestions.forEach((eq, idx) => {
+                const div = document.createElement('div');
+                div.className = "p-4 bg-white dark:bg-slate-800 rounded-2xl border space-y-2";
+                if (eq.type === 'mc') {
+                    let optsHtml = '';
+                    eq.options.forEach((opt, oIdx) => {
+                        optsHtml += `<label class="flex items-center space-x-2 text-xs cursor-pointer"><input type="radio" name="eval-${idx}" value="${oIdx}"><span>${opt}</span></label>`;
+                    });
+                    div.innerHTML = `<div class="font-bold text-xs">${eq.q}</div><div class="space-y-1">${optsHtml}</div>`;
+                } else {
+                    div.innerHTML = `<div class="font-bold text-xs">${eq.q}</div><input type="text" id="eval-short-${idx}" class="text-xs p-2 rounded-xl border bg-slate-50 dark:bg-slate-900 w-full" placeholder="Jawaban...">`;
+                }
+                container.appendChild(div);
+            });
+        }
+
+        function submitEvaluation() {
+            let correctCount = 0;
+            evalQuestions.forEach((eq, idx) => {
+                if (eq.type === 'mc') {
+                    const sel = document.querySelector(`input[name="eval-${idx}"]:checked`);
+                    if (sel && parseInt(sel.value) === eq.correct) correctCount++;
+                } else {
+                    const val = document.getElementById(`eval-short-${idx}`).value.trim().toUpperCase();
+                    if (val === eq.ans.toUpperCase()) correctCount++;
+                }
+            });
+
+            const score = Math.round((correctCount / evalQuestions.length) * 100);
+            const resCard = document.getElementById('eval-result-card');
+            resCard.classList.remove('hidden');
+
+            resCard.innerHTML = `
+                <div class="text-center space-y-3">
+                    <div class="text-4xl">🏆</div>
+                    <h4 class="text-xl font-bold font-heading">Hasil Evaluasi Akhir</h4>
+                    <div class="text-3xl font-extrabold text-brand-accent">${score} / 100</div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300">Jawaban Benar: ${correctCount} dari ${evalQuestions.length} soal.</p>
+                    <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-xs text-left space-y-1">
+                        <b>Identitas Peserta:</b><br>
+                        • Satuan Pendidikan: SMK Negeri 1 Jabon<br>
+                        • Mata Pelajaran: Informatika Kelas X (TP 1.3)<br>
+                        • Status: ${score >= 75 ? 'LULUS / TUNTAS KOMPETENSI' : 'PERLU MENGULANG MATERI'}
+                    </div>
+                    <button onclick="copyEvalResult(${score})" class="bg-brand-primary text-white font-bold px-6 py-2.5 rounded-xl text-xs">Salin Hasil untuk Google Classroom</button>
+                </div>
+            `;
+            showToast(`Evaluasi selesai! Skor Anda: ${score}`);
+        }
+
+        function copyEvalResult(score) {
+            const text = `=== HASIL EVALUASI DISKRIT SMK N 1 JABON ===\nSkor: ${score}/100\nMapel: Informatika X TP 1.3\n============================================`;
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            showToast("Hasil evaluasi disalin ke clipboard!");
+        }
+
+        function checkQuizGen(btn, isCorrect) {
+            const parent = btn.parentElement;
+            parent.querySelectorAll('button').forEach(b => b.className = "text-xs px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-semibold");
+            if (isCorrect) {
+                btn.className = "text-xs px-3 py-1.5 rounded-lg bg-emerald-500 text-white font-bold";
+                showToast("Jawaban Benar!");
+            } else {
+                btn.className = "text-xs px-3 py-1.5 rounded-lg bg-rose-500 text-white font-bold shake";
+                showToast("Kurang tepat, coba lagi.");
+            }
+        }
+
+        // Teacher Hints
+        const teacherHints = {
+            modul1: { title: "Petunjuk Guru: Modul 1", content: "Alokasi: 4 JP x 45 Menit. Bahas proposisi, operator logika, dan tabel kebenaran." },
+            modul2: { title: "Petunjuk Guru: Modul 2", content: "Alokasi: 4 JP x 45 Menit. Tekankan pengujian nilai batas dan implikasi." },
+            modul3: { title: "Petunjuk Guru: Modul 3", content: "Alokasi: 4 JP x 45 Menit. Ajarkan aturan perkalian, faktorial, dan keamanan sandi." },
+            modul4: { title: "Petunjuk Guru: Modul 4", content: "Alokasi: 4 JP x 45 Menit. Jelaskan batasan strategi greedy vs brute force." },
+            modul5: { title: "Petunjuk Guru: Modul 5", content: "Alokasi: 4 JP x 45 Menit. Latih siswa menghitung derajat simpul dan bobot jalur terpendek." },
+            modul6: { title: "Petunjuk Guru: Modul 6", content: "Alokasi: 4 JP x 45 Menit. Dampingi penyusunan laporan kelompok dan presentasi." },
+            evaluasi: { title: "Kunci Evaluasi Akhir", content: "1. Benar | 2. Benar | 3. 12 | 4. 24 | 5. A-C-D (4) | 6. 1757600 | 7. Salah (S)" }
+        };
+
+        function openTeacherModal(mod) {
+            const data = teacherHints[mod];
+            document.getElementById('teacher-modal-title').innerText = data.title;
+            document.getElementById('teacher-modal-content').innerText = data.content;
+            document.getElementById('teacherModal').classList.remove('hidden');
+        }
+        function closeTeacherModal() { document.getElementById('teacherModal').classList.add('hidden'); }
+        function openAboutModal() { document.getElementById('aboutModal').classList.remove('hidden'); }
+        function closeAboutModal() { document.getElementById('aboutModal').classList.add('hidden'); }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = "fixed top-20 right-4 z-50 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold transition transform translate-y-0 opacity-100 flex items-center space-x-2";
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-brand-mint"></i><span>${message}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function completeModule(modNum) {
+            if (!appState.completedModules.includes('modul' + modNum)) {
+                appState.completedModules.push('modul' + modNum);
+                appState.xp += 50;
+                document.getElementById('xpDisplay').innerText = appState.xp;
+                showToast(`Modul ${modNum} Selesai! +50 XP.`);
+                saveState();
+                updateProgressUI();
+            }
+            navigateTo('home');
+        }
+
+        function updateProgressUI() {
+            appState.completedModules.forEach(mod => {
+                const badge = document.getElementById('badge-' + mod);
+                if (badge) {
+                    badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600";
+                    badge.innerHTML = `<i class="fa-solid fa-check mr-1"></i>Selesai`;
+                }
+            });
+            document.getElementById('progressPercent').innerText = Math.round((appState.completedModules.length / 6) * 100);
+        }
+
+        function saveState() { localStorage.setItem('diskritState', JSON.stringify(appState)); }
+        function loadState() {
+            const saved = localStorage.getItem('diskritState');
+            if (saved) {
+                appState = JSON.parse(saved);
+                document.getElementById('departmentSelect').value = appState.department;
+                document.getElementById('xpDisplay').innerText = appState.xp;
+                document.getElementById('streakDisplay').innerText = appState.streak;
+                updateProgressUI();
+            }
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.remove('light');
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeIcon').className = "fa-solid fa-sun text-amber-400";
+            }
+        }
+    </script>
+</body>
+</html>
